@@ -1,0 +1,252 @@
+<!doctype html>  
+<html>  
+<head>  
+ <meta charset='utf-8'>  
+ <style type="text/css">  
+    
+     a{  
+        text-decoration: none;  
+    }  
+      
+    .table2{  
+        border:#C8C8C8 solid;     
+        border-width:1px 0px 0px 1px;   
+        background: #F3F0F0;  
+        margin-top:25px;  
+    }  
+      
+    .td0{  
+        border:#C8C8C8 solid;    
+        border-width:0 0 1px 0;  
+    }  
+      
+    .td2{  
+        border:#C8C8C8 solid;     
+        border-width:0 1px 1px 0 ;  
+    }  
+      
+    .barcon {  
+        width: 1000px;  
+        margin: 0 auto;  
+        text-align: center;  
+     }  
+  
+    .barcon1 {  
+        font-size: 17px;  
+        float: left;  
+        margin-top: 20px;  
+    }  
+  
+    .barcon2 {  
+        float: right;  
+    }  
+  
+    .barcon2 ul {  
+        margin: 20px 0;  
+        padding-left: 0;  
+        list-style: none;  
+        text-align: center;  
+    }  
+  
+    .barcon2 li {  
+        display: inline;  
+    }  
+  
+    .barcon2 a {  
+        font-size: 16px;  
+        font-weight: normal;  
+        display: inline-block;  
+        padding: 5px;  
+        padding-top: 0;  
+        color: black;  
+        border: 1px solid #ddd;  
+        background-color: #fff;  
+    }  
+  
+    .barcon2 a:hover{  
+        background-color: #eee;  
+    }  
+  
+    .ban {  
+        opacity: .4;  
+    }  
+ </style>  
+</head>  
+<body>  
+    <table width="950" cellpadding="0" cellspacing="0" class="table2" align="center">  
+    <thead>  
+    <tr>  
+    <td colspan="3" height="33" class="td0"> </td>  
+    <td align="center" class="td2"><a href="###">添加用户</a></td>  
+    </tr>  
+    <tr align="center">  
+        <th width="150" height="33" class="td2">序号</th>  
+        <th width="300" class="td2">用户名</th>  
+        <th width="250" class="td2">权限</th>  
+        <th width="250" class="td2">操作</th>  
+    </tr>  
+    </thead>  
+    <tbody id="adminTbody">  
+    <tr align="center">  
+        <td class="td2" height="33" width="150">1</td>  
+        <td class="td2" >admin</td>  
+        <td class="td2" >管理员</td>  
+        <td class="td2" ><a href="###">修改</a></td>  
+    </tr>  
+    </tbody>  
+</table>  
+<div id="barcon" class="barcon" >  
+    <div id="barcon1" class="barcon1"></div>  
+        <div id="barcon2" class="barcon2">  
+            <ul>  
+                <li><a href="###" id="firstPage">首页</a></li>  
+                <li><a href="###" id="prePage">上一页</a></li>  
+                <li><a href="###" id="nextPage">下一页</a></li>  
+                <li><a href="###" id="lastPage">尾页</a></li>  
+                <li><select id="jumpWhere">  
+                </select></li>  
+                <li><a href="###" id="jumpPage" onclick="jumpPage()">跳转</a></li>  
+            </ul>  
+        </div>  
+</div>  
+<script src="http://code.jquery.com/jquery-1.4.1.min.js"></script>  
+<script>  
+/*动态生成用户函数 
+ num为生成的用户数量 
+*/  
+function dynamicAddUser(num){  
+    for(var i=1;i<=num;i++)  
+    {  
+            var trNode=document.createElement("tr");  
+            $(trNode).attr("align","center");  
+            //序号  
+            var tdNodeNum=document.createElement("td");  
+            $(tdNodeNum).html(i+1);  
+            tdNodeNum.style.width = "150px";  
+            tdNodeNum.style.height = "33px";  
+            tdNodeNum.className = "td2";  
+            //用户名  
+            var tdNodeName=document.createElement("td");  
+            $(tdNodeName).html("lzj"+i);  
+            tdNodeName.style.width = "300px";  
+            tdNodeName.className = "td2";  
+            //权限              
+            var tdNodePri=document.createElement("td");  
+            tdNodePri.style.width = "250px";  
+            tdNodePri.className = "td2";  
+            var priText=document.createElement("span");  
+            $(priText).css({"display":"inline-block","text-align":"center"});  
+            $(priText).text("普通用户");  
+            tdNodePri.appendChild(priText);  
+            //操作  
+            var tdNodeOper = document.createElement("td");  
+            tdNodeOper.style.width = "170px";  
+            tdNodeOper.className = "td2";  
+            var editA = document.createElement("a");  
+            $(editA).attr("href", "###").text("编辑");  
+            $(editA).css({ display: "inline-block" });  
+            tdNodeOper.appendChild(editA);  
+  
+            trNode.appendChild(tdNodeNum);  
+            trNode.appendChild(tdNodeName);  
+            trNode.appendChild(tdNodePri);  
+            trNode.appendChild(tdNodeOper);  
+            $("#adminTbody")[0].appendChild(trNode);  
+    }  
+}  
+$(function(){  
+    dynamicAddUser(80);  
+    goPage(1,10);  
+    var tempOption="";  
+    for(var i=1;i<=totalPage;i++)  
+    {  
+        tempOption+='<option value='+i+'>'+i+'</option>'  
+    }  
+    $("#jumpWhere").html(tempOption);  
+})  
+  
+/** 
+ * 分页函数 
+ * pno--页数 
+ * psize--每页显示记录数 
+ * 分页部分是从真实数据行开始，因而存在加减某个常数，以确定真正的记录数 
+ * 纯js分页实质是数据行全部加载，通过是否显示属性完成分页功能 
+**/  
+  
+var pageSize=0;//每页显示行数  
+var currentPage_=1;//当前页全局变量，用于跳转时判断是否在相同页，在就不跳，否则跳转。  
+var totalPage;//总页数  
+function goPage(pno,psize){  
+    var itable = document.getElementById("adminTbody");  
+    var num = itable.rows.length;//表格所有行数(所有记录数)  
+  
+     pageSize = psize;//每页显示行数  
+    //总共分几页   
+    if(num/pageSize > parseInt(num/pageSize)){     
+            totalPage=parseInt(num/pageSize)+1;     
+       }else{     
+           totalPage=parseInt(num/pageSize);     
+       }     
+    var currentPage = pno;//当前页数  
+     currentPage_=currentPage;  
+    var startRow = (currentPage - 1) * pageSize+1;   
+    var endRow = currentPage * pageSize;  
+        endRow = (endRow > num)? num : endRow;      
+       //遍历显示数据实现分页  
+    /*for(var i=1;i<(num+1);i++){     
+        var irow = itable.rows[i-1]; 
+        if(i>=startRow && i<=endRow){ 
+            irow.style.display = "";     
+        }else{ 
+            irow.style.display = "none"; 
+        } 
+    }*/  
+  
+    $("#adminTbody tr").hide();  
+    for(var i=startRow-1;i<endRow;i++)  
+    {  
+        $("#adminTbody tr").eq(i).show();  
+    }  
+    var tempStr = "共"+num+"条记录 分"+totalPage+"页 当前第"+currentPage+"页";  
+     document.getElementById("barcon1").innerHTML = tempStr;  
+       
+    if(currentPage>1){  
+        $("#firstPage").on("click",function(){  
+            goPage(1,psize);  
+        }).removeClass("ban");  
+        $("#prePage").on("click",function(){  
+            goPage(currentPage-1,psize);  
+        }).removeClass("ban");     
+    }else{  
+        $("#firstPage").off("click").addClass("ban");  
+        $("#prePage").off("click").addClass("ban");    
+    }  
+  
+    if(currentPage<totalPage){  
+        $("#nextPage").on("click",function(){  
+            goPage(currentPage+1,psize);  
+        }).removeClass("ban")  
+        $("#lastPage").on("click",function(){  
+            goPage(totalPage,psize);  
+        }).removeClass("ban")  
+    }else{  
+        $("#nextPage").off("click").addClass("ban");  
+        $("#lastPage").off("click").addClass("ban");  
+    }     
+      
+    $("#jumpWhere").val(currentPage);  
+}  
+  
+  
+function jumpPage()  
+{  
+    var num=parseInt($("#jumpWhere").val());  
+    if(num!=currentPage_)  
+    {  
+        goPage(num,pageSize);  
+    }  
+}  
+  
+</script>  
+</body>   
+</html>  
